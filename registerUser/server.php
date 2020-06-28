@@ -17,6 +17,7 @@
 		$email = mysqli_real_escape_string($db, $_POST['email']);
 		$password_1 = mysqli_real_escape_string($db, $_POST['password_1']);
 		$password_2 = mysqli_real_escape_string($db, $_POST['password_2']);
+		$uniqid = uniqid();
 
 		// form validation: ensure that the form is correctly filled
 		if (empty($username)) { array_push($errors, "Username is required"); }
@@ -27,12 +28,32 @@
 			array_push($errors, "The two passwords do not match");
 		}
 
-		// register user if there are no errors in the form
+		// register user and set question/score if there are no errors in the form
 		if (count($errors) == 0) {
 			$password = md5($password_1);//encrypt the password before saving in the database
-			$query = "INSERT INTO users (username, email, password) 
-					  VALUES('$username', '$email', '$password')";
+			$query = "INSERT INTO users (username, email, password, uniqueID) 
+					  VALUES('$username', '$email', '$password', '$uniqid')";
 			mysqli_query($db, $query);
+
+			// set initial question/score for this new user(in end application, the initial question should be selected based on this experience)
+			$query = "Select `id`FROM `users` WHERE `uniqueID` = '$uniqid'";
+			$tableData = mysqli_query($db, $query);
+			$rows = mysqli_fetch_assoc($tableData);
+			//only one row for sure, so using foreach will not effect
+			foreach ($rows as $userDBrow) {
+				$userDBid = intval($userDBrow['id']);
+				//echo "$userDBid";
+				//echo"<br>";
+			}
+
+			$query = "INSERT INTO progresscard (`id_fk`, `totalScore`, `totalCoins`, `questionID`) VALUES ('$userDBid',0, 0,'1a')";
+			$queryExecute = mysqli_query($db, $query);
+			//echo("Query: " . $query);
+			//echo"<br>";
+			if (!$queryExecute) {
+				echo("Error description: " . mysqli_error($db));
+			}
+
 
 			$_SESSION['username'] = $username;
 			$_SESSION['success'] = "You are now logged in";
