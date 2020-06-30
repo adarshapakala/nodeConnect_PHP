@@ -6,6 +6,10 @@
 	$email    = "";
 	$errors = array(); 
 	$_SESSION['success'] = "";
+	$userDBid = "";
+	$_SESSION['question'] = "";
+	$_SESSION['qRequirement'] = "";
+	$_SESSION['qDescription'] = "";
 
 	// connect to database
 	$db = mysqli_connect('localhost', 'root', '', 'nodeConnect');
@@ -36,14 +40,11 @@
 			mysqli_query($db, $query);
 
 			// set initial question/score for this new user(in end application, the initial question should be selected based on this experience)
-			$query = "Select `id`FROM `users` WHERE `uniqueID` = '$uniqid'";
-			$tableData = mysqli_query($db, $query);
-			$rows = mysqli_fetch_assoc($tableData);
-			//only one row for sure, so using foreach will not effect
-			foreach ($rows as $userDBrow) {
-				$userDBid = intval($userDBrow['id']);
-				//echo "$userDBid";
-				//echo"<br>";
+			$query = "SELECT * FROM users WHERE `uniqueID` = '$uniqid'";
+			$tableData = mysqli_query($db, $query);			
+			//only one row for sure, so using whileloop will not effect
+			while ($row=mysqli_fetch_array($tableData)) {
+				$userDBid = $row['id'];
 			}
 
 			$query = "INSERT INTO progresscard (`id_fk`, `totalScore`, `totalCoins`, `questionID`) VALUES ('$userDBid',0, 0,'1a')";
@@ -53,9 +54,8 @@
 			if (!$queryExecute) {
 				echo("Error description: " . mysqli_error($db));
 			}
-
-
 			$_SESSION['username'] = $username;
+			$_SESSION['userDBid'] = $userDBid;
 			$_SESSION['success'] = "You are now logged in";
 			header('location: ..\index.php');
 		}
@@ -75,20 +75,58 @@
 		if (empty($password)) {
 			array_push($errors, "Password is required");
 		}
+		echo $username;
 
 		if (count($errors) == 0) {
 			$password = md5($password);
 			$query = "SELECT * FROM users WHERE username='$username' AND password='$password'";
-			$results = mysqli_query($db, $query);
+			
+			$tableData = mysqli_query($db, $query);
+			//only one row for sure, so using whileloop will not effect
+			while ($row=mysqli_fetch_array($tableData)) {
+				$userDBid = $row['id'];
+			}
 
-			if (mysqli_num_rows($results) == 1) {
+			if (mysqli_num_rows($tableData) == 1) {
 				$_SESSION['username'] = $username;
 				$_SESSION['success'] = "You are now logged in";
-				header('location: ../index.php');
+				$_SESSION['userDBid'] = $userDBid;
+				header('location: ..\userBoard\userDashboard.php');
+				//header('location: server.php');
+				echo $query;
+
 			}else {
 				array_push($errors, "Wrong username/password combination");
 			}
 		}
 	}
+	// ... 
+
+	// Start Practise
+
+	if (isset($_POST['continueWorkout'])) {
+		// alert("Start Practise server side code is called!");
+		$userDBid=$_SESSION['userDBid'];
+	    $query = "SELECT * FROM `progresscard` WHERE `id_fk`= $userDBid";
+	    $tableData = mysqli_query($db, $query);
+		//only one row for sure, so using whileloop will not effect
+		while ($row=mysqli_fetch_array($tableData)) {
+			$qID = $row['questionID'];
+		}
+	    
+		$query = "SELECT * FROM `questionpaper` WHERE  `questionID` = '$qID'";
+	    $tableData = mysqli_query($db, $query);
+		//only one row for sure, so using whileloop will not effect
+		while ($row=mysqli_fetch_array($tableData)) {
+			$_SESSION['question'] = $row['question'];
+	    	$_SESSION['qRequirement'] = $row['qRequirement'];
+	    	$_SESSION['qDescription'] = $row['qDescription'];
+	    }
+	    
+
+
+
+	}
+
 
 ?>
