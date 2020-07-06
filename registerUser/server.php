@@ -10,6 +10,11 @@
 	$_SESSION['question'] = "";
 	$_SESSION['qRequirement'] = "";
 	$_SESSION['qDescription'] = "";
+	$_SESSION['qID'] = "";
+	$_SESSION['loadQ'] = 0;
+	$_SESSION['qPath'] = "";
+	$globalPath ="";
+	$_SESSION['userFolder']="";
 
 	// connect to database
 	$db = mysqli_connect('localhost', 'root', '', 'nodeConnect');
@@ -121,6 +126,11 @@
 			$_SESSION['question'] = $row['question'];
 	    	$_SESSION['qRequirement'] = $row['qRequirement'];
 	    	$_SESSION['qDescription'] = $row['qDescription'];
+	    	$_SESSION['qID'] = $row['questionID'];
+	    	$_SESSION['success'] = 'success';
+	    	$_SESSION['qPath'] = $row['templateFilePath'];
+	    	$_SESSION['loadQ'] = 1;
+	    	
 	    }
 	    
 

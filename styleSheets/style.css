@@ -26,6 +26,15 @@ form, .content {
 	background: white;
 	border-radius: 0px 0px 10px 10px;
 }
+
+.questions {
+	width: 95%;
+	margin: 1px auto;
+	padding: 20px;
+	border: 1px solid #B0C4DE;
+	background: white;
+	border-radius: 10px 10px 10px 10px;
+}
 .input-group {
 	margin: 10px 0px 10px 0px;
 }
@@ -50,6 +59,8 @@ form, .content {
 	background: #5F9EA0;
 	border: none;
 	border-radius: 5px;
+	justify-content: center;
+    align-items: center;
 }
 .error {
 	width: 92%; 
