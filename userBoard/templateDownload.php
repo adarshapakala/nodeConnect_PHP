@@ -10,11 +10,14 @@ header("Expires: 0");
 header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
 header("Cache-Control: public");
 header("Content-Description: File Transfer");
-header("Content-Type: " . $mime_type);
+//header("Content-Type: " . $mime_type);
+header("Content-Type: application/octet-stream");
+
 header("Content-Length: " .(string)(filesize($path)) );
 header('Content-Disposition: attachment; filename="'.basename($path).'"');
 header("Content-Transfer-Encoding: binary\\n");
- 
+ob_clean();
+flush(); 
 readfile($path);
 
 function custom_copy($src, $dst) {  
