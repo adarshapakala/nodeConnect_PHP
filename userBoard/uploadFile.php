@@ -37,12 +37,12 @@ if ($uploadOk == 0) {
     $reportpath=$target_dir.'\\'.$_SESSION['qID'].'.html';
     $unitTestModule=$target_dir.'\\'.$_SESSION['qID'].'.lvtest';
     $command = 'LabVIEWCLI -OperationName RunVI -VIPath "C:\unitTestExecuter\unitTestExecutor.vi" -PortNumber 3366'.' "'.$reportpath.'" "'.$unitTestModule.'"';
-    echo $command;
+    
 
     $cliOut= exec($command);
-    echo $cliOut;
+    
 
-	//header('location: ..\userBoard\userDashboard.php');
+	header('location: ..\userBoard\userDashboard.php');
 
 
   } else {
