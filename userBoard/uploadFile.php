@@ -30,8 +30,21 @@ if ($uploadOk == 0) {
 // if everything is ok, try to upload file
 } else {
   if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-    echo "The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded.";
-    echo $target_file;
+    //echo "The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded.";
+    //echo $target_file;
+
+    // run unit test command on the uploaded file
+    $reportpath=$target_dir.'\\'.$_SESSION['qID'].'.html';
+    $unitTestModule=$target_dir.'\\'.$_SESSION['qID'].'.lvtest';
+    $command = 'LabVIEWCLI -OperationName RunVI -VIPath "C:\unitTestExecuter\unitTestExecutor.vi" -PortNumber 3366'.' "'.$reportpath.'" "'.$unitTestModule.'"';
+    echo $command;
+
+    $cliOut= exec($command);
+    echo $cliOut;
+
+	//header('location: ..\userBoard\userDashboard.php');
+
+
   } else {
     echo "Sorry, there was an error uploading your file.";
   }
