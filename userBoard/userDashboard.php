@@ -1,5 +1,6 @@
 <?php 
 include('..\registerUser\server.php');
+
 ?>
 
 <!DOCTYPE html>
@@ -33,23 +34,24 @@ include('..\registerUser\server.php');
 			<p><strong><?php echo $_SESSION['qRequirement']; ?></strong></p>
 			<p><strong><?php echo $_SESSION['qDescription']; ?></strong></p>
 		  	<p><strong><?php echo $_SESSION['qID']; ?></strong></p>
+		  	<p><strong><?php echo $globalPath; ?></strong></p>
 		  	<br>
 		  	<br>
 		  	<a href="templateDownload.php">Download Template</a>
 		  	<br>
 		  	<br>
 		  	<br>
-		</div>		
-		
-
-	<form action="uploadFile.php" method="post" enctype="multipart/form-data">
-		<div class="questions">
-			<input type="file" class="btn" name="fileToUpload" id="fileToUpload">
-			<button type="submit" class="btn" name="submittSolution">Submitt Solution</button>
 		</div>
-	</form>
+		<form action="uploadFile.php" method="post" enctype="multipart/form-data">
+			<div class="questions">
+				<input type="file" class="btn" name="fileToUpload" id="fileToUpload">
+				<button type="submit" class="btn" name="submittSolution">Submitt Solution</button>
+			</div>
+		</form>
 
 		<?php endif ?>
+
+		
 
 </body>
 

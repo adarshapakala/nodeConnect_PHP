@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+
 $target_dir = $_SESSION['userFolder'];
 echo "the file filder:".$_SESSION['userFolder'];
 $target_file = $target_dir . "\\".basename($_FILES["fileToUpload"]["name"]);
@@ -34,15 +35,15 @@ if ($uploadOk == 0) {
     //echo $target_file;
 
     // run unit test command on the uploaded file
-    $reportpath=$target_dir.'\\'.$_SESSION['qID'].'.html';
+    $_SESSION['reportpath']=$target_dir.'\\'.$_SESSION['qID'].'.html';
     $unitTestModule=$target_dir.'\\'.$_SESSION['qID'].'.lvtest';
-    $command = 'LabVIEWCLI -OperationName RunVI -VIPath "C:\unitTestExecuter\unitTestExecutor.vi" -PortNumber 3366'.' "'.$reportpath.'" "'.$unitTestModule.'"';
+    $command = 'LabVIEWCLI -OperationName RunVI -VIPath "C:\unitTestExecuter\unitTestExecutor.vi" -PortNumber 3366'.' "'.$_SESSION['reportpath'].'" "'.$unitTestModule.'"';
     
 
     $cliOut= exec($command);
     
 
-	header('location: ..\userBoard\userDashboard.php');
+	header('location: ..\userBoard\displayResult.php');
 
 
   } else {

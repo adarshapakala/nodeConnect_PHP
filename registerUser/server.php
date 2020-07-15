@@ -2,19 +2,21 @@
 	session_start();
 
 	// variable declaration
-	$username = "";
-	$email    = "";
+	//$username = "";
+	//$email    = "";
 	$errors = array(); 
-	$_SESSION['success'] = "";
-	$userDBid = "";
-	$_SESSION['question'] = "";
-	$_SESSION['qRequirement'] = "";
-	$_SESSION['qDescription'] = "";
-	$_SESSION['qID'] = "";
+	//$_SESSION['success'] = "";
+	//$userDBid = "";
+	//$_SESSION['question'] = "";
+	//$_SESSION['qRequirement'] = "";
+	//$_SESSION['qDescription'] = "";
+	//$_SESSION['qID'] = "";
 	$_SESSION['loadQ'] = 0;
-	$_SESSION['qPath'] = "";
+	//$_SESSION['qPath'] = "";
 	$globalPath ="";
-	$_SESSION['userFolder']="";
+	//$_SESSION['userFolder']="";
+	//$_SESSION['reportpath'] ='';
+	//$_SESSION['questionBaseScore']=0;
 
 	// connect to database
 	$db = mysqli_connect('localhost', 'root', '', 'nodeConnect');
@@ -54,6 +56,7 @@
 
 			$query = "INSERT INTO progresscard (`id_fk`, `totalScore`, `totalCoins`, `questionID`) VALUES ('$userDBid',0, 0,'1a')";
 			$queryExecute = mysqli_query($db, $query);
+			$globalPath =$query;
 			//echo("Query: " . $query);
 			//echo"<br>";
 			if (!$queryExecute) {
@@ -127,15 +130,56 @@
 	    	$_SESSION['qRequirement'] = $row['qRequirement'];
 	    	$_SESSION['qDescription'] = $row['qDescription'];
 	    	$_SESSION['qID'] = $row['questionID'];
+	    	$_SESSION['questionBaseScore'] =$row['baseScore'];
 	    	$_SESSION['success'] = 'success';
 	    	$_SESSION['qPath'] = $row['templateFilePath'];
 	    	$_SESSION['loadQ'] = 1;
 	    	
 	    }
 	    
+	}
 
 
+	// Next question
 
+	if (isset($_POST['continueToNextQ'])) {
+		// Get user score and add the new score from solving the previouse question
+		$userDBid=$_SESSION['userDBid'];
+		$query = "SELECT * FROM `progresscard` WHERE `id_fk`= $userDBid";
+	    $tableData = mysqli_query($db, $query);
+	    //only one row for sure, so using whileloop will not effect
+		while ($row=mysqli_fetch_array($tableData)) {
+			$totalScore = $row['totalScore'];
+		}
+		//add the marks scored by solving previouse question
+		$totalScore = $totalScore + $_SESSION['questionBaseScore'];
+		//increament the question number
+		$questionNumber=-1;
+		$questionNumber = intval(substr($_SESSION['qID'], 0, 1));
+		
+		$questionNumber += 1;
+		
+		$_SESSION['qID']=strval($questionNumber).'a';
+		$qID = $_SESSION['qID'];
+
+		//Update the question ID in DB when moving to next question 
+		$query = "UPDATE `progresscard` SET `id_fk`=$userDBid,`totalScore`=$totalScore,`totalCoins`=0,`questionID`='$qID' WHERE `id_fk`=$userDBid";
+		$queryExecute = mysqli_query($db, $query);
+		    
+		$query = "SELECT * FROM `questionpaper` WHERE  `questionID` = '$qID'";
+	    $tableData = mysqli_query($db, $query);
+	    echo $query;
+		//only one row for sure, so using whileloop will not effect
+		while ($row=mysqli_fetch_array($tableData)) {
+			$_SESSION['question'] = $row['question'];
+	    	$_SESSION['qRequirement'] = $row['qRequirement'];
+	    	$_SESSION['qDescription'] = $row['qDescription'];
+	    	$_SESSION['qID'] = $row['questionID'];
+	    	$_SESSION['success'] = 'success';
+	    	$_SESSION['qPath'] = $row['templateFilePath'];
+	    	$_SESSION['loadQ'] = 1;	    	
+	    }
+	   header('location: ..\userBoard\userDashboard.php'); 
 	}
 
 
